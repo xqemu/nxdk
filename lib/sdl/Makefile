@@ -74,3 +74,30 @@ CLEANRULES += clean-libsdlimage
 .PHONY: clean-libsdlimage
 clean-libsdlimage:
 	$(VE)rm -f $(LIBSDLIMAGE_OBJS) $(NXDK_DIR)/lib/libSDL2_image.lib
+
+SDL_GFX_DIR = $(NXDK_DIR)/lib/sdl/SDL2_gfx
+SDL_GFX_SRCS += $(SDL_GFX_DIR)/SDL2_framerate.c \
+                $(SDL_GFX_DIR)/SDL2_gfxPrimitives.c \
+                $(SDL_GFX_DIR)/SDL2_imageFilter.c \
+                $(SDL_GFX_DIR)/SDL2_rotozoom.c
+
+SDL_GFX_OBJS = $(addsuffix .obj, $(basename $(SDL_GFX_SRCS)))
+
+$(NXDK_DIR)/lib/libSDL_gfx.lib: $(SDL_GFX_OBJS)
+
+NXDK_CFLAGS += -I$(NXDK_DIR)/lib/sdl \
+               -I$(SDL_GFX_DIR) \
+               -DXBOX
+
+NXDK_CXXFLAGS += -I$(NXDK_DIR)/lib/sdl \
+                 -I$(SDL_GFX_DIR) \
+                 -DXBOX
+
+main.exe: $(NXDK_DIR)/lib/libSDL_gfx.lib
+
+CLEANRULES += clean-sdl_gfx
+
+.PHONY: clean-sdl_gfx
+clean-sdl_gfx:
+	$(VE)rm -f $(SDL_gfx_OBJS) \
+             $(NXDK_DIR)/lib/libSDL_gfx.lib
