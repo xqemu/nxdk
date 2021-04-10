@@ -31,3 +31,6 @@
 [submodule "lib/sdl/SDL_image"]
 	path = lib/sdl/SDL2_image
 	url = https://github.com/SDL-mirror/SDL_image.git
+[submodule "lib/zstd/zstd"]
+	path = lib/zstd/zstd
+	url = https://github.com/facebook/zstd

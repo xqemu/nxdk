@@ -37,6 +37,10 @@ int mbtowc (wchar_t *pwc, const char *string, size_t n);
 #define __min(a,b) (((a) < (b)) ? (a) : (b))
 #define __max(a,b) (((a) > (b)) ? (a) : (b))
 
+#define _byteswap_ushort __builtin_bswap16
+#define _byteswap_ulong __builtin_bswap32
+#define _byteswap_uint64 __builtin_bswap64
+
 #ifdef __cplusplus
 }
 #endif
