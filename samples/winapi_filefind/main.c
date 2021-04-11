@@ -15,7 +15,7 @@ int main(void)
     if (!ret) {
         // There was an error. We can get more information about an error from WinAPI code using GetLastError()
         DWORD mountError = GetLastError();
-        debugPrint("Failed to mount C: drive! Reason: %x\n", mountError);
+        debugPrint("Failed to mount C: drive! Error code: %x\n", mountError);
         goto sleepForever;
     }
 
@@ -30,7 +30,7 @@ int main(void)
     DWORD findFileError;
     if (hFind == INVALID_HANDLE_VALUE) {
         findFileError = GetLastError();
-        debugPrint("FindFirstHandle() failed! Reason: %x\n", findFileError);
+        debugPrint("FindFirstHandle() failed! Error code: %x\n", findFileError);
         goto cleanup;
     }
 
@@ -59,10 +59,12 @@ cleanup:
     // If there was an error while unmounting
     if (!ret) {
         DWORD unmountError = GetLastError();
-        debugPrint("Couldn't unmount C: drive! Reason: %x", unmountError);
+        debugPrint("Couldn't unmount C: drive! Error code: %x", unmountError);
     }
 sleepForever:
     while (1) {
         Sleep(2000);
     }
+
+    return 0;
 }
