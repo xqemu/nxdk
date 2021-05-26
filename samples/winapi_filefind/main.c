@@ -13,9 +13,10 @@ int main(void)
     // Mount C:
     BOOL ret = nxMountDrive('C', "\\Device\\Harddisk0\\Partition2\\");
     if (!ret) {
-        debugPrint("Failed to mount C: drive!\n");
-        Sleep(5000);
-        return 1;
+        // There was an error. We can get more information about an error from WinAPI code using GetLastError()
+        DWORD mountError = GetLastError();
+        debugPrint("Failed to mount C: drive! Error code: %x\n", mountError);
+        goto sleepForever;
     }
 
     debugPrint("Content of C:\\\n");
@@ -26,10 +27,11 @@ int main(void)
     // Like on Windows, "*.*" and "*" will both list all files,
     // no matter whether they contain a dot or not
     hFind = FindFirstFile("C:\\*.*", &findFileData);
+    DWORD findFileError;
     if (hFind == INVALID_HANDLE_VALUE) {
-        debugPrint("FindFirstHandle() failed!\n");
-        Sleep(5000);
-        return 1;
+        findFileError = GetLastError();
+        debugPrint("FindFirstHandle() failed! Error code: %x\n", findFileError);
+        goto cleanup;
     }
 
     do {
@@ -38,24 +40,29 @@ int main(void)
         } else {
             debugPrint("File     : ");
         }
-
         debugPrint("%s\n", findFileData.cFileName);
     } while (FindNextFile(hFind, &findFileData) != 0);
 
     debugPrint("\n");
 
-    DWORD error = GetLastError();
-    if (error == ERROR_NO_MORE_FILES) {
+    findFileError = GetLastError();
+    if (findFileError == ERROR_NO_MORE_FILES) {
         debugPrint("Done!\n");
     } else {
-        debugPrint("error: %x\n", error);
+        debugPrint("error: %x\n", findFileError);
     }
 
     FindClose(hFind);
 
+cleanup:
+    ret = nxUnmountDrive('C');
+    // If there was an error while unmounting
+    if (!ret) {
+        DWORD unmountError = GetLastError();
+        debugPrint("Couldn't unmount C: drive! Error code: %x", unmountError);
+    }
+sleepForever:
     while (1) {
         Sleep(2000);
     }
-
-    return 0;
 }
