@@ -63,8 +63,16 @@ static xid_dev_t *alloc_xid_device(void) {
 }
 
 static void free_xid_device(xid_dev_t *xid_dev) {
-    //Find the device head in the linked list
     xid_dev_t *head = pxid_list;
+
+    //If the xid is at the head of the list, remove now.
+    if (xid_dev == head)
+    {
+        pxid_list = head->next;
+        head = NULL;
+    }
+
+    //Find the device head in the linked list
     while (head != NULL && head->next != xid_dev)
     {
         head = head->next;
